@@ -139,21 +139,23 @@ staging_events_copy = ("""
     
     COPY staging_events_table FROM {}
     iam_role {}
+    FORMAT AS JSON {}
     COMPUPDATE OFF
     TIMEFORMAT as 'epochmillisecs'
-    region 'us-west-2'
-    FORMAT AS JSON{};  
+    region 'us-east-1'
+    ;  
     
 """).format(config['S3']['LOG_DATA'],
             config['IAM_ROLE']['ARN'],
-            config['S3']['LOG_JSONPATH'])
+            config['S3']['LOG_JSONPATH']
+            )
 
 staging_songs_copy = ("""
 
     COPY staging_songs_table FROM {}
     iam_role {}
     json 'auto' 
-    region 'us-west-2';
+    region 'us-east-1';
 
 """).format(config['S3']['SONG_DATA'],
             config['IAM_ROLE']['ARN'])
@@ -218,7 +220,7 @@ SELECT DISTINCT
 
 FROM staging_events_table se
 
-WHERE se.page ='NextSong';
+WHERE se.page ='NextSong' AND se.userid IS NOT NULL;
 
 """)
 
